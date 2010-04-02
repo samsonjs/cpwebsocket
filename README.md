@@ -46,6 +46,13 @@ var webSocket = [CPWebSocket openWebSocketWithURL: @"ws://localhost:8080" delega
 {
     CPLog('web socket error');
 }
+
+// ...
+// somewhere else
+// ...
+
+    [webSocket send: @"Hey, this is pretty slick!"];
+
 </code></pre>
 
 
