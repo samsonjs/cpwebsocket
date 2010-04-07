@@ -8,11 +8,10 @@
 
 @import <Foundation/CPObject.j>
 
-// FIXME export these ... #define?
-var CPWebSocketStateConnecting = 0,
-    CPWebSocketStateOpen       = 1,
-    CPWebSocketStateClosing    = 2,
-    CPWebSocketStateClosed     = 3;
+CPWebSocketStateConnecting = 0,
+CPWebSocketStateOpen       = 1,
+CPWebSocketStateClosing    = 2,
+CPWebSocketStateClosed     = 3;
 
 @implementation CPWebSocket : CPObject
 {
