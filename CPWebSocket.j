@@ -2,6 +2,7 @@
 // CPWebSocket.j
 //
 // Copyright 2010 Sami Samhuri
+// Additions Ignacio Cases
 //
 // MIT license
 //
@@ -39,15 +40,19 @@ CPWebSocketStateClosed     = 3;
 {
     _ws.onopen = function() {
         [delegate webSocketDidOpen: self];
+        [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
     };
     _ws.onclose = function(event) {
         [delegate webSocketDidClose: self];
+        [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
     };
     _ws.onmessage = function(event) {
         [delegate webSocket: self didReceiveMessage: event.data];
+        [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
     };
     _ws.onerror = function(event) {
         [delegate webSocketDidReceiveError: self];
+        [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
     };
 }
 
@@ -56,9 +61,26 @@ CPWebSocketStateClosed     = 3;
     return _ws.URL;
 }
 
-- (CPNumber) state
+// I. Cases: In Draft 76 the api is readyState instead of state
+- (CPNumber) readyState
 {
-    return _ws.state;
+    return _ws.readyState;
+}
+// I. Cases
+- (CPString)state 
+{
+    var result;
+    
+    if ([self readyState] == 0) {
+        result = @"CPWebSocketStateConnecting";
+    }else if ([self readyState] == 1) {
+        result = @"CPWebSocketStateOpen";
+    } else if ([self readyState] == 2) {
+        result = @"CPWebSocketStateClosing";
+    } else if ([self readyState] == 3) {
+        result = @"CPWebSocketStateClosed";
+    }
+    return result;
 }
 
 - (CPNumber) bytesBuffered
@@ -71,7 +93,7 @@ CPWebSocketStateClosed     = 3;
     _ws.close();
 }
 
-- (BOOL) send: (CPString) data
+- (BOOL) send: (JSObject) data
 {
     // TODO check the state, should not be CPWebSocketConnecting
     return _ws.send(data);
